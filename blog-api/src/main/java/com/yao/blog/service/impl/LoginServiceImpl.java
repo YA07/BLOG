@@ -36,7 +36,7 @@ public class LoginServiceImpl implements LoginService {
     private RedisTemplate<String,String> redisTemplate;
 
     //加密盐
-    private static final String slat = "115080";
+    private static final String salt = "115080";
 
     @Override
     public Result login(LoginParams loginParams) {
@@ -47,20 +47,20 @@ public class LoginServiceImpl implements LoginService {
         //5 token放redis中，redis token:user信息  登录认证的时候，先认证token字符串是否合法，去redis认证是否存在
         String account = loginParams.getAccount();
         String password = loginParams.getPassword();
-        //System.out.println("login() "+account);
+
 
         if(StringUtils.isBlank(account) || StringUtils.isBlank(password)){
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(),ErrorCode.PARAMS_ERROR.getMsg());
         }
 
-        password = DigestUtils.md5Hex(password+slat);
-        //System.out.println("login() "+password);
+        password = DigestUtils.md5Hex(password+salt);
+
         SysUser sysUser = sysUserService.findUser(account,password);
         if(sysUser == null){
-            //System.out.println("sysUser == null");
+
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
-        //System.out.println("sysUser != null");
+
         String token = JWTUtils.createToken(sysUser.getId());
         redisTemplate.opsForValue().set("TOKEN_"+token, JSON.toJSONString(sysUser),1, TimeUnit.DAYS);
         return Result.success(token);

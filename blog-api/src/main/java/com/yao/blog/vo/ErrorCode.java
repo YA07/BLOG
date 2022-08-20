@@ -13,7 +13,9 @@ public enum  ErrorCode {
     NO_PERMISSION(70001,"无访问权限"),
     SESSION_TIME_OUT(90001,"会话超时"),
     NO_LOGIN(90002,"未登录"),
-    TOKEN_ERROR(10003,"Token有误");
+    TOKEN_ERROR(10003,"Token有误"),
+    ACCOUNT_EXIST(10004,"账户已经存在了");
+
 
     private int code;
     private String msg;
